@@ -2,7 +2,14 @@ import json
 
 import base58
 from cryptography.fernet import Fernet
-from metaplex.transactions import burn, deploy, mint, send, topup, update_token_metadata
+from metaplex.transactions import (
+    burn,
+    deploy,
+    mint,
+    send,
+    topup,
+    update_token_metadata,
+)
 from metaplex.utils.execution_engine import execute
 from solana.keypair import Keypair
 
@@ -93,6 +100,7 @@ class MetaplexAPI:
         self,
         api_endpoint,
         contract_key,
+        metadata,
         dest_key,
         link,
         max_retries=3,
@@ -106,7 +114,13 @@ class MetaplexAPI:
         Mints an NFT to an account, updates the metadata and creates a master edition
         """
         tx, signers = await mint(
-            api_endpoint, self.keypair, contract_key, dest_key, link, supply=supply
+            api_endpoint,
+            self.keypair,
+            contract_key,
+            metadata,
+            dest_key,
+            link,
+            supply=supply,
         )
         resp = await execute(
             api_endpoint,

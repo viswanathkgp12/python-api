@@ -12,7 +12,11 @@ from solana.system_program import (
 )
 from solana.transaction import Transaction
 from spl.token._layouts import ACCOUNT_LAYOUT, MINT_LAYOUT
-from spl.token.instructions import BurnParams, InitializeMintParams, MintToParams
+from spl.token.instructions import (
+    BurnParams,
+    InitializeMintParams,
+    MintToParams,
+)
 from spl.token.instructions import TransferParams as SPLTransferParams
 from spl.token.instructions import burn as spl_burn
 from spl.token.instructions import (
@@ -159,7 +163,9 @@ def update_token_metadata(
     return tx, signers
 
 
-async def mint(api_endpoint, source_account, contract_key, dest_key, link, supply=1):
+async def mint(
+    api_endpoint, source_account, contract_key, metadata, dest_key, link, supply=1
+):
     """
     Mint a token on the specified network and contract, into the wallet specified by address.
     Required parameters: batch, sequence, limit
@@ -215,7 +221,7 @@ async def mint(api_endpoint, source_account, contract_key, dest_key, link, suppl
             )
         )
         tx = tx.add(mint_to_ix)
-        metadata = await get_metadata(client, mint_account)
+        # metadata = await get_metadata(client, mint_account)
         update_metadata_data = update_metadata_instruction_data(
             metadata["data"]["name"],
             metadata["data"]["symbol"],
