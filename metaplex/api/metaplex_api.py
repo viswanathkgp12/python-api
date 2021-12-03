@@ -33,26 +33,46 @@ class MetaplexAPI:
         api_endpoint,
         name,
         symbol,
+        uri,
         fees,
+        dest,
         max_retries=3,
         skip_confirmation=False,
         max_timeout=60,
         target=20,
         finalized=True,
+        supply=1,
     ):
         """
         Deploy a contract to the blockchain (on network that support contracts). Takes the network ID and contract name, plus initialisers of name and symbol. Process may vary significantly between blockchains.
         Returns status code of success or fail, the contract address, and the native transaction data.
         """
         try:
-            tx, signers, contract = await deploy(
-                api_endpoint, self.keypair, name, symbol, fees
+            deploy_tx, signers, contract = await deploy(api_endpoint, self.keypair, name, symbol, fees)
+            metadata = {
+                "data": {
+                    "name": name,
+                    "symbol": symbol,
+                    "seller_fee_basis_points": 0,
+                    "creators": [str(self.public_key)],
+                    "verified": None,
+                    "share": None,
+                },
+            }
+            mint_tx, mint_signers = await mint(
+                api_endpoint,
+                self.keypair,
+                contract,
+                metadata,
+                dest,
+                uri,
+                supply=supply,
             )
-            print(contract)
+            deploy_tx.add(mint_tx)
             resp = await execute(
                 api_endpoint,
-                tx,
-                signers,
+                deploy_tx,
+                signers,  # Signers of both mint_tx, deploy_tx is the source_acct_public_key
                 max_retries=max_retries,
                 skip_confirmation=skip_confirmation,
                 max_timeout=max_timeout,
