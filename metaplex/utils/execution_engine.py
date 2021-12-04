@@ -58,3 +58,5 @@ async def confirmation(client, signatures, max_timeout=60, target=20, finalized=
         elif is_finalized:
             print(f"Took {elapsed} seconds to confirm transaction")
             return
+
+    raise Exception("Timed out before confirmation")
