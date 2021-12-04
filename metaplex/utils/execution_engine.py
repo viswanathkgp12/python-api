@@ -16,7 +16,9 @@ async def execute(
     finalized=True,
 ):
     async with AsyncClient(api_endpoint) as client:
-        signers = list(map(Keypair, set(map(lambda s: s.seed, signers))))
+        signers = list(
+            map(Keypair, list(dict.fromkeys((map(lambda s: s.seed, signers)))))
+        )
         for attempt in range(max_retries):
             try:
                 result = await client.send_transaction(

@@ -48,7 +48,9 @@ class MetaplexAPI:
         Returns status code of success or fail, the contract address, and the native transaction data.
         """
         try:
-            deploy_tx, signers, contract = await deploy(api_endpoint, self.keypair, name, symbol, fees)
+            deploy_tx, signers, contract = await deploy(
+                api_endpoint, self.keypair, name, symbol, fees
+            )
             metadata = {
                 "data": {
                     "name": name,
